@@ -1,0 +1,2 @@
+# sqlite-parser
+一个以sqlite语法为规范的sql解析器，用于解析SQL中各个字段的生产逻辑和子查询间的依赖关系

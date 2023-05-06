@@ -1,0 +1,4 @@
+# Project exclude paths
+/grammar-parser/target/
+/grammar-resolver/target/
+/sql-parser-core/target/

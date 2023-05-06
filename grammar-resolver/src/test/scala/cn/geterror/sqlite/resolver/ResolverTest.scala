@@ -1,0 +1,49 @@
+package cn.geterror.sqlite.resolver
+import cn.geterror.sqlite.resolver.Resolver
+import cn.geterror.sqlite.result.FactTable
+object ResolverTest extends App {
+  private val tableSql = "CREATE TABLE IF NOT EXISTS SAKAIDatas(id INTEGER PRIMARY KEY AUTOINCREMENT,val_act TEXT,mt_aurl TEXT,utm_campaign TEXT,uid INTEGER,tag JSON,mno TEXT,trace_id TEXT,bssid TEXT,mreq_id TEXT,goods_id TEXT,utm_source TEXT,refer_cid TEXT,region_id TEXT,category_id TEXT,nt INTEGER,ad_id INTEGER,apn TEXT,stm INTEGER,bid TEXT,ct_poi TEXT,login_type TEXT,query_id TEXT,mduration_list JSON,fromBg INTEGER,app TEXT,lch TEXT,pageInfoKey TEXT,tm INTEGER,sc TEXT,search_id TEXT,category TEXT,ext JSON,app_launch_id TEXT,movie_id TEXT,stid TEXT,url TEXT,promotion_id TEXT,is_auto INTEGER,lng REAL,cid TEXT,duration REAL,utm_content TEXT,activityid TEXT,val_lab_custom JSON,dealgroup_id INTEGER,poi_id TEXT,ps TEXT,net TEXT,utm_medium TEXT,keyword TEXT,city_id INTEGER,deal_id TEXT,lat REAL,sku_id TEXT,mge_type TEXT,web_sdk_ver TEXT,sdk_ver TEXT,seq INTEGER,local_source TEXT,element_id TEXT,ua TEXT,req_id TEXT,push_id TEXT,title TEXT,abtest TEXT,mduration_cnt INTEGER,msid TEXT,locate_city_id INTEGER,bht TEXT,val_lab JSON,cinema_id TEXT,sort_id TEXT,os TEXT,select_id TEXT,mduration_total INTEGER,cat_id TEXT,utm_term TEXT,shopuuid TEXT,coupon_id TEXT,maiton_id TEXT,refer_req_id TEXT,date TEXT,item_index TEXT,order_id TEXT,serial_seq INTEGER,nm TEXT,is_local INTEGER,biz_id TEXT, rtt_env JSON)"
+  private val querySql = "select \n\tcid, pageType\nfrom (\n\n\tselect cid,\n       case\n\t\t\twhen nm = 'PV' and cid in ('c_ykhs39e','c_pay_7c9fc4b4','c_PJmoK','PayActivity','c_youxuan_di9fwjxp','c_meishi_rao5v99i','c_0evvuz5','c_group_ahh7flih','c_7mdqy8u','c_wa98r1t','c_93snvsll','c_5IpAx','c_0k1kug7i','reservation','c_gc_pf74xk2c','c_NW1Y4','c_hJsIZ','c_hotel_createorder_unified','c_hotel_createorder_pageopencount') \n\t\t\t\t then 'blacklist'\t\t-- 黑名单\n\t\t\twhen nm = 'PV' and cid in ('c_sxr976a','com.meituan.android.pt.homepage.activity.MainActivity')\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t then 'homepage' \t\t-- 首页\n\t\t\twhen nm = 'PV' and cid in ('c_pay_lckwv8n8','c_pay_s489j8j6')\t\t\t                                                                \t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t then 'pay'\t\t\t\t-- 金融\n\t\t\twhen nm = 'PV' and category = 'waimai'                                                                                                                                              \n\t\t\t\t then 'waimai'\t\t\t-- 外卖\n\t\t\twhen nm = 'PV' and category = 'travel'                                                                                                                                              \n\t\t\t\t then 'travel'\t\t\t-- 门票\n\t\t\twhen nm = 'PV' and category = 'meishi'                                                                                                                                              \n\t\t\t\t then 'meishi'\t\t\t-- 到餐\n\t\t\twhen nm = 'PV' and category = 'movie'                                                                                                                                              \t\n\t\t\t\t then 'movie'\t\t\t-- 猫眼电影\n\t\t\twhen nm = 'PV' and category = 'airbnb'                                                                                                                                              \n\t\t\t\t then 'airbnb'\t\t\t-- 榛果民宿\n\t\t\twhen nm = 'PV' and category = 'hotel'                                                                                                                                               \n\t\t\t\t then 'hotel'\t\t\t-- 酒店\n\t\t\twhen nm = 'PV' and category = 'ovse'                                                                                                                                                \n\t\t\t\t then 'ovse' \t\t\t-- 海外\n\t\t\twhen nm = 'PV' and category = 'traffic'                                                                                                                                             \n\t\t\t\t then 'traffic'\t\t\t-- 大交通\n\t\t\twhen (nm = 'PV' and cid in ('c_kids_hhy8hs0i','c_kids_l6kkrfaw','c_za2vyopc')) \t\t\t\t\t\n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') = '389')                 \n\t\t\t\t then 'kids' \t\t\t-- 亲子\n\t\t\twhen (nm = 'PV' and cid in ('c_education_channel_dp','c_education_channel_mt','c_gc_lql9hfbj')) \n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') = '289')              \n\t\t\t\t then 'edu' \t\t\t-- 教育\n\t\t\twhen (nm = 'PV' and cid in ('c_u89g79lo')) \t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') = '600')                 \n\t\t\t\t then 'house' \t\t\t-- 家装\n\t\t\twhen (nm = 'PV' and cid in ('c_gc_jr9efo14','c_cosmetology_vx66auuz')) \t\t\t\t\t\t\t\n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') = '2' and json_extract(val_lab, '$.second_cate_id') = '768')                 \n\t\t\t\t then 'cosmetology' \t-- 医美\n\t\t\twhen (nm = 'PV' and cid in ('c_beauty_59bcza55','c_beauty_hfv43xp8','c_beauty_a78tf8ea','c_beauty_3n9plk02','c_cosmetology_67si4ioh','c_beauty_m4ok5dgp','c_beauty_3q27uo7c')) \n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') = '2' and json_extract(val_lab, '$.second_cate_id') != '768')                                     \n\t\t\t\t then 'beauty' \t\t\t-- 丽人\n\t\t\twhen (nm = 'PV' and cid in ('c_wed_wedChannel__v201905_Picasso')) \t\n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') = '388')                                      \n\t\t\t\t then 'wed' \t\t\t-- 结婚\n\t\t\twhen (nm = 'PV' and cid in ('c_gc_4y9gm0rp','c_play_LeisureChannel','c_play_7tmjc36k')) \t\n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') in ('3','1853'))\n\t\t\t\t then 'play' \t\t\t-- 休闲娱乐\n\t\t\twhen (nm = 'PV' and cid in ('c_easylife_x81tqygk','c_o0jt2nfq','c_easylife_7mjpyxed')) \n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') = '4')\n\t\t\t\t then 'services' \t\t-- 生活服务\n\t\t\twhen (nm = 'PV' and cid in ('c_tnc2o2k2','c_upisedlo')) \n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') = '206')\n\t\t\t\t then 'fitness' \t\t-- 运动健身\n\t\t\twhen (nm = 'PV' and cid in ('c_elpecabo')) \n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') = '390')\n\t\t\t\t then 'cars' \t\t\t-- 养车/用车\n\t\t\twhen (nm = 'PV' and cid in ('c_RnQ9y','c_315je','c_gc_dynkaxs1')) \n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') = '450')\n\t\t\t\t then 'treatment' \t\t-- 医疗\n\t\t\twhen (nm = 'PV' and cid in ('c_t6uoF')) \n\t\t\t\t or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv' and json_extract(val_lab, '$.first_cate_id') = '1861')\n\t\t\t\t then 'pets' \t\t\t-- 宠物\n            else 'unknown'\n       end as pageType,\n  \t\ttm\n\tfrom $%tablename%$\n\twhere app_launch_id = '$%cur_app_launch_id%$'\n  \t  and ((nm = 'PV') or (nm = 'MV' and bid = 'b_techportal_fy16u0rb_mv'))\n) t1\nwhere t1.pageType <> 'unknown'\norder by t1.tm desc limit 1\t\t "
+  private val query2 = "" +
+    "SELECT a.* FROM\n" +
+    "(SELECT a1.* from\n" +
+    "  (select json_extract(val_lab, '$.query_id') as queryid,\n" +
+    " \t\tjson_extract(val_lab, '$.item_id') as poi_id, \n" +
+    " \t\tjson_extract(val_lab, '$.before_index') as poiIndex,\n" +
+    "        json_extract(val_lab, '$.poi_lat') as poi_lat,\n" +
+    "        json_extract(val_lab, '$.poi_lng') as poi_lng,\n" +
+    "        (CASE WHEN json_extract(val_lab, '$.search_lat') = '-999' THEN (CASE WHEN json_extract(val_lab, '$.select_lat') = '-999' THEN lat ELSE json_extract(val_lab, '$.select_lat') END) ELSE json_extract(val_lab, '$.search_lat') END) as lat,\n" +
+    "        (CASE WHEN json_extract(val_lab, '$.search_lng') = '-999' THEN (CASE WHEN json_extract(val_lab, '$.select_lng') = '-999' THEN lng ELSE json_extract(val_lab, '$.select_lng') END) ELSE json_extract(val_lab, '$.search_lng') END) as lng,\n" +
+    "\n" +
+    " \t\tjson_extract(val_lab, '$.score') as poiScore,\n" +
+    " \t\tjson_extract(val_lab, '$.sale_price') as salePrice,\n" +
+    "        json_extract(val_lab, '$.original_price') as originalPrice,\n" +
+    "        json_extract(val_lab, '$.original_price')-json_extract(val_lab, '$.sale_price') as priceGap,\n" +
+    "        json_extract(val_lab, '$.level') as mtlevel,\n" +
+    "        '$%ct%$' as device\n" +
+    " from SAKAIDatas \n" +
+    "where \n" +
+    "\t bid = 'b_hotel_hk5re33d_mv'\n" +
+    "order by tm DESC\n" +
+    "limit 90\n" +
+    ") a1 join\n" +
+    "(select json_extract(val_lab, '$.query_id') as queryid\n" +
+    " from SAKAIDatas \n" +
+    "where \n" +
+    "\t bid = 'b_hotel_hk5re33d_mv'\n" +
+    "order by tm DESC\n" +
+    "limit 1) a2\n" +
+    "on a1.queryid = a2.queryid) a\n" +
+    "LEFT JOIN\n" +
+    "(select json_extract(val_lab, '$.query_id') as queryid,\n" +
+    " \t\tjson_extract(val_lab, '$.item_id') as poi_id\n" +
+    " from SAKAIDatas \n" +
+    "where \n" +
+    "\t bid = 'b_hotel_hk5re33d_mc'\n" +
+    "order by tm DESC\n" +
+    "limit 15) b\n" +
+    "ON a.queryid = b.queryid and a.poi_id = b.poi_id\n" +
+    "WHERE b.poi_id IS NULL";
+    Resolver.resolve(querySql.replace("$%tablename%$","SAKAIDatas"),Seq(tableSql))
+
+}
